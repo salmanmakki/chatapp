@@ -23,14 +23,14 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // ✅ CORS FIRST
 app.use(
   cors({
-
-    origin: "http://localhost:5173",
-
+    origin: [
+      "http://localhost:5173",
+      "https://frontend-chatting-nine.vercel.app",
+    ],
     credentials: true,
-
   })
-
 );
+
 
 
 
