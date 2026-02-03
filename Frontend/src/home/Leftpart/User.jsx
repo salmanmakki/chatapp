@@ -1,6 +1,7 @@
 import React from "react";
 import useConversation from "../../zustand/useConversation.js";
 import { useSocketContext } from "../../context/SocketContext.jsx";
+import API_CONFIG from "../../config/api.js";
 
 function User({ user }) {
   const { selectedConversation, setSelectedConversation } = useConversation();
@@ -8,7 +9,7 @@ function User({ user }) {
   const { onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(user._id);
 
-  const API_URL = "http://localhost:4001";
+  const API_URL = API_CONFIG.BASE_URL;
   const formatLastMessageTime = (time) => {
     if (!time) return "";
     const date = new Date(time);

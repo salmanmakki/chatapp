@@ -4,13 +4,14 @@ import toast from "react-hot-toast";
 import { IoClose, IoTrashOutline, IoBanOutline } from "react-icons/io5";
 import useConversation from "../../zustand/useConversation.js";
 import { useAuth } from "../../context/AuthProvider.jsx";
+import API_CONFIG from "../../config/api.js";
 
 function ChatDetails({ onClose, onImageClick }) {
   const { selectedConversation, messages, setMessage } = useConversation();
   const [authUser, setAuthUser] = useAuth();
   const [busy, setBusy] = useState(false);
 
-  const API_URL = "http://localhost:4001";
+  const API_URL = API_CONFIG.BASE_URL;
   const getProfilePicUrl = (profilePic) => {
     if (!profilePic || profilePic === "/user.jpg") {
       return "/user.jpg";

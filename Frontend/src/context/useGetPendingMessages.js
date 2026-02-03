@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSocketContext } from "./SocketContext.jsx";
+import { logger } from "../utils/logger.js";
 
 function useGetPendingMessages() {
   const [pendingMessages, setPendingMessages] = useState([]);
@@ -10,16 +11,16 @@ function useGetPendingMessages() {
   const fetchPendingMessages = async () => {
     try {
       setLoading(true);
-      console.log("Fetching pending messages...");
+      logger.log("Fetching pending messages...");
       // Get all messages with status "pending" for current user
       const res = await axios.get("/api/message/pending-messages", {
         withCredentials: true
       });
-      console.log("Pending messages response:", res.data);
+      logger.log("Pending messages response:", res.data);
       setPendingMessages(res.data || []);
     } catch (error) {
-      console.error("Error fetching pending messages:", error);
-      console.error("Error details:", error.response?.data);
+      logger.error("Error fetching pending messages:", error);
+      logger.error("Error details:", error.response?.data);
       setPendingMessages([]);
     } finally {
       setLoading(false);
@@ -29,12 +30,12 @@ function useGetPendingMessages() {
   useEffect(() => {
     // Fetch pending messages when socket connects
     if (socket) {
-      console.log("Socket connected, fetching pending messages...");
+      logger.log("Socket connected, fetching pending messages...");
       fetchPendingMessages();
       
       // Listen for new message requests
       socket.on("messageRequest", (data) => {
-        console.log("Received message request via socket:", data);
+        logger.log("Received message request via socket:", data);
         setPendingMessages(prev => [...prev, data]);
       });
     }

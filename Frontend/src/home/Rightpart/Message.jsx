@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from "react";
-import axios from "axios";
-import { BsCheck, BsCheckAll } from "react-icons/bs";
+import React from "react";
+import { useSocketContext } from "../../context/SocketContext.jsx";
 import useConversation from "../../zustand/useConversation.js";
+import API_CONFIG from "../../config/api.js";
 
 function Message({ message, onImageClick }) {
   const authUser = JSON.parse(localStorage.getItem("ChatApp"));
@@ -19,7 +19,7 @@ function Message({ message, onImageClick }) {
   const type = message.type || (message.imageUrl ? "image" : "text");
 
   const attachment = message?.attachments?.[0];
-  const API_URL = "http://localhost:4001";
+  const API_URL = API_CONFIG.BASE_URL;
   
   const getFullUrl = (url) => {
     if (!url) return null;

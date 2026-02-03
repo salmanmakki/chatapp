@@ -3,6 +3,7 @@ import { FaSearch } from "react-icons/fa";
 import useGetAllUsers from "../../context/useGetAllUsers";
 import useConversation from "../../zustand/useConversation";
 import toast from "react-hot-toast";
+import API_CONFIG from "../../config/api.js";
 
 function Search() {
   const [search, setSearch] = useState("");
@@ -98,7 +99,7 @@ function Search() {
                       user.profilePic?.startsWith("http")
                         ? user.profilePic
                         : user.profilePic?.startsWith("/uploads")
-                        ? `http://localhost:4001${user.profilePic}`
+                        ? `${API_CONFIG.BASE_URL}${user.profilePic}`
                         : user.profilePic || "/user.jpg"
                     }
                     alt={user.fullname}

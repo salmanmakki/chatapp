@@ -2,12 +2,13 @@ import React from "react";
 import useConversation from "../../zustand/useConversation.js";
 import { useSocketContext } from "../../context/SocketContext.jsx";
 import { IoInformationCircleOutline } from "react-icons/io5";
+import API_CONFIG from "../../config/api.js";
 
 function Chatuser({ onOpenDetails }) {
   const { selectedConversation, setSelectedConversation } = useConversation();
   const { onlineUsers } = useSocketContext();
 
-  const API_URL = "http://localhost:4001";
+  const API_URL = API_CONFIG.BASE_URL;
   const getProfilePicUrl = (profilePic) => {
     if (!profilePic || profilePic === "/user.jpg") {
       return "/user.jpg";

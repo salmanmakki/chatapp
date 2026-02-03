@@ -2,58 +2,60 @@ import React, { useState } from 'react';
 import { useSocketContext } from '../context/SocketContext.jsx';
 import useGetPendingMessages from '../context/useGetPendingMessages.js';
 import axios from 'axios';
+import API_CONFIG from '../config/api.js';
+import { logger } from '../utils/logger.js';
 
 function MessageRequests() {
   const { pendingMessages, loading, removePendingMessage } = useGetPendingMessages();
   const [acceptLoading, setAcceptLoading] = useState({});
 
-  console.log("MessageRequests component - current requests:", pendingMessages);
+  logger.log("MessageRequests component - current requests:", pendingMessages);
 
   const acceptRequest = async (messageId, senderId) => {
-    console.log("Accepting request for messageId:", messageId, "from sender:", senderId);
-    console.log("MessageId type:", typeof messageId);
+    logger.log("Accepting request for messageId:", messageId, "from sender:", senderId);
+    logger.log("MessageId type:", typeof messageId);
     setAcceptLoading(prev => ({ ...prev, [messageId]: true }));
     try {
-      console.log("Making API call to:", `/api/message/accept-pending/${messageId}`);
+      logger.log("Making API call to:", `/api/message/accept-pending/${messageId}`);
       const response = await axios.post(`/api/message/accept-pending/${messageId}`, {}, {
         withCredentials: true
       });
-      console.log("Accept response:", response.data);
+      logger.log("Accept response:", response.data);
       
       // Remove from pending messages
       removePendingMessage(messageId);
       
-      console.log('Message request accepted successfully');
+      logger.log('Message request accepted successfully');
     } catch (error) {
-      console.error('Error accepting request:', error);
-      console.error('Error details:', error.response?.data);
-      console.error('Error status:', error.response?.status);
-      console.error('Error config:', error.config);
+      logger.error('Error accepting request:', error);
+      logger.error('Error details:', error.response?.data);
+      logger.error('Error status:', error.response?.status);
+      logger.error('Error config:', error.config);
     } finally {
       setAcceptLoading(prev => ({ ...prev, [messageId]: false }));
     }
   };
 
   const deleteRequest = async (messageId) => {
-    console.log("Deleting request for messageId:", messageId);
-    console.log("MessageId type:", typeof messageId);
+    logger.log("Deleting request for messageId:", messageId);
+    logger.log("MessageId type:", typeof messageId);
     setAcceptLoading(prev => ({ ...prev, [messageId]: true }));
     try {
-      console.log("Making delete API call to:", `/api/message/reject-pending/${messageId}`);
+      logger.log("Making delete API call to:", `/api/message/reject-pending/${messageId}`);
       const response = await axios.post(`/api/message/reject-pending/${messageId}`, {}, {
         withCredentials: true
       });
-      console.log("Delete response:", response.data);
+      logger.log("Delete response:", response.data);
       
       // Remove from pending messages
       removePendingMessage(messageId);
       
-      console.log('Message request deleted successfully');
+      logger.log('Message request deleted successfully');
     } catch (error) {
-      console.error('Error deleting request:', error);
-      console.error('Error details:', error.response?.data);
-      console.error('Error status:', error.response?.status);
-      console.error('Error config:', error.config);
+      logger.error('Error deleting request:', error);
+      logger.error('Error details:', error.response?.data);
+      logger.error('Error status:', error.response?.status);
+      logger.error('Error config:', error.config);
     } finally {
       setAcceptLoading(prev => ({ ...prev, [messageId]: false }));
     }
@@ -83,7 +85,7 @@ function MessageRequests() {
                       request.senderProfilePic?.startsWith("http")
                         ? request.senderProfilePic
                         : request.senderProfilePic?.startsWith("/uploads")
-                        ? `http://localhost:4001${request.senderProfilePic}`
+                        ? `${API_CONFIG.BASE_URL}${request.senderProfilePic}`
                         : request.senderProfilePic || "/user.jpg"
                     }
                     alt={request.senderName}

@@ -1,8 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react-hooks/set-state-in-effect */
-import { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "./AuthProvider";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./AuthProvider.jsx";
 import io from "socket.io-client";
+import API_CONFIG from "../config/api.js";
 const socketContext = createContext();
 
 // it is a hook.
@@ -18,7 +19,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (authUser) {
-      const socket = io("http://localhost:4001", {
+      const socket = io(API_CONFIG.SOCKET_URL, {
         query: {
           userId: authUser.user._id,
         },
