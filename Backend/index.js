@@ -25,12 +25,13 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://frontend-chatting-krilryy-salmanmakkis-projects.vercel.app",
+      "https://chatapp-frontend-ten-opal.vercel.app",
     ],
     credentials: true,
   })
 );
 
+app.options("*", cors());
 
 
 
