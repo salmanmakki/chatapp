@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 
 function Signup() {
 
-  const [authUser, setAuthUser] = useAuth();
+  const [, setAuthUser] = useAuth();
 
   const [profilePic, setProfilePic] = useState("");
 

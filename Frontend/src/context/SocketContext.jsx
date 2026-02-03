@@ -18,29 +18,37 @@ export const SocketProvider = ({ children }) => {
   const [authUser] = useAuth();
 
   useEffect(() => {
-    if (authUser) {
-      const socket = io(API_CONFIG.SOCKET_URL, {
-        query: {
-          userId: authUser.user._id,
-        },
-      });
-      setSocket(socket);
-      socket.on("getOnlineUsers", (users) => {
-        setOnlineUsers(users);
-      });
-      
-      // Listen for new messages to update contact list
-      socket.on("newMessage", (message) => {
-        setNewMessageAlert(message);
-      });
-      
-      return () => socket.close();
-    } else {
-      if (socket) {
-        socket.close();
-        setSocket(null);
-      }
+    if (!authUser) {
+      // Clear socket-related state on logout or when user is not available
+      setSocket(null);
+      setOnlineUsers([]);
+      setNewMessageAlert(null);
+      return;
     }
+
+    const newSocket = io(API_CONFIG.SOCKET_URL, {
+      query: {
+        userId: authUser.user._id,
+      },
+    });
+
+    setSocket(newSocket);
+
+    newSocket.on("getOnlineUsers", (users) => {
+      setOnlineUsers(users);
+    });
+
+    // Listen for new messages to update contact list
+    newSocket.on("newMessage", (message) => {
+      setNewMessageAlert(message);
+    });
+
+    return () => {
+      newSocket.close();
+      setSocket(null);
+      setOnlineUsers([]);
+      setNewMessageAlert(null);
+    };
   }, [authUser]);
   return (
     <socketContext.Provider value={{ socket, onlineUsers, newMessageAlert }}>

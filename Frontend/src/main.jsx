@@ -5,6 +5,8 @@ import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthProvider.jsx'
 import { SocketProvider } from './context/SocketContext.jsx'
+// Configure Axios defaults (baseURL, credentials) for all API calls
+import './config/axiosConfig.js'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

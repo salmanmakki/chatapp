@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { useSocketContext } from '../context/SocketContext.jsx';
 import useGetPendingMessages from '../context/useGetPendingMessages.js';
 import axios from 'axios';
 import API_CONFIG from '../config/api.js';
 import { logger } from '../utils/logger.js';
 
 function MessageRequests() {
-  const { pendingMessages, loading, removePendingMessage } = useGetPendingMessages();
+  const { pendingMessages, removePendingMessage } = useGetPendingMessages();
   const [acceptLoading, setAcceptLoading] = useState({});
 
   logger.log("MessageRequests component - current requests:", pendingMessages);

@@ -56,14 +56,8 @@ function Search() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Show suggestions when typing
-  useEffect(() => {
-    if (search.trim() && filteredUsers.length > 0) {
-      setShowSuggestions(true);
-    } else {
-      setShowSuggestions(false);
-    }
-  }, [search, filteredUsers]);
+  // Note: showSuggestions is controlled by focus and outside-click handlers.
+  // We intentionally avoid toggling it inside an effect to prevent unnecessary cascaded renders.
 
   return (
     <div className="px-4 pt-3 pb-2 relative" ref={searchRef}>
@@ -76,7 +70,13 @@ function Search() {
               className="w-full bg-transparent outline-none placeholder:text-slate-500"
               placeholder="Search people"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+                if (!value.trim()) {
+                  setShowSuggestions(false);
+                }
+              }}
               onFocus={() => search.trim() && setShowSuggestions(true)}
             />
           </div>
