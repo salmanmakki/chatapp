@@ -27,7 +27,7 @@ router.post("/send/:id", secureRoute, sendMessage);
 router.post(
   "/send-image/:id",
   secureRoute,
-  upload.single("file"), // ✅ MUST BE "file"
+  upload.single("image"), // ✅ MUST BE "file"
   sendImageMessage
 );
 
