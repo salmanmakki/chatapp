@@ -4,11 +4,15 @@ import cloudinary from "../config/cloudinary.js";
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: async (req, file) => ({
-    folder: "chat-app",
-    resource_type: "auto", // ✅ image, video, pdf
-    public_id: `${Date.now()}-${file.originalname}`,
-  }),
+  params: async (req, file) => {
+    const isPdf = file.mimetype === "application/pdf";
+
+    return {
+      folder: "chat-app",
+      resource_type: isPdf ? "raw" : "auto",
+      public_id: `${Date.now()}-${file.originalname}`,
+    };
+  },
 });
 
 const upload = multer({
