@@ -22,9 +22,11 @@ function Message({ message, onImageClick }) {
 
   // ✅ Cloudinary-only URLs (no BASE_URL, no /uploads)
   const mediaUrl =
-    type === "image" || type === "video" || type === "document"
-      ? attachment?.url || message.imageUrl
-      : null;
+  attachment?.url ||
+  message.imageUrl ||
+  message.fileUrl ||
+  null;
+
 
   const hasText = Boolean(message.message?.trim());
 
@@ -47,6 +49,7 @@ function Message({ message, onImageClick }) {
           <img
             src={mediaUrl}
             alt="sent"
+            loading="lazy"
             onClick={() => onImageClick?.(mediaUrl)}
             className="rounded-xl max-h-64 object-cover cursor-pointer"
           />
