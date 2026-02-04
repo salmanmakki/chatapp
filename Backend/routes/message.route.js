@@ -20,22 +20,22 @@ import {
 
 const router = express.Router();
 
-// TEXT MESSAGE
+// TEXT
 router.post("/send/:id", secureRoute, sendMessage);
 
-// IMAGE (Cloudinary)
+// IMAGE
 router.post(
   "/send-image/:id",
   secureRoute,
-  upload.single("file"),
+  upload.single("file"), // ✅ MUST BE "file"
   sendImageMessage
 );
 
-// FILE / VIDEO / PDF (Cloudinary)
+// FILE / VIDEO / PDF
 router.post(
   "/send-file/:id",
   secureRoute,
-  upload.single("file"),
+  upload.single("file"), // ✅ MUST BE "file"
   sendFileMessage
 );
 
@@ -44,7 +44,7 @@ router.post("/send-contact/:id", secureRoute, sendContactMessage);
 router.post("/send-poll/:id", secureRoute, sendPollMessage);
 router.post("/vote/:messageId", secureRoute, votePoll);
 
-// Pending messages
+// Pending
 router.get("/pending-messages", secureRoute, getPendingMessages);
 router.post("/accept-pending/:messageId", secureRoute, acceptPendingMessage);
 router.post("/reject-pending/:messageId", secureRoute, rejectPendingMessage);
@@ -55,4 +55,3 @@ router.post("/mark-seen/:id", secureRoute, markMessagesSeen);
 router.post("/clear/:id", secureRoute, clearChat);
 
 export default router;
-
