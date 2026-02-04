@@ -5,21 +5,22 @@ import cloudinary from "../config/cloudinary.js";
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
-    const isPdf = file.mimetype === "application/pdf";
+    let resourceType = "image"; // ✅ FORCE IMAGE
+
+    // only video gets video
+    if (file.mimetype.startsWith("video/")) {
+      resourceType = "video";
+    }
 
     return {
       folder: "chat-app",
-      resource_type: isPdf ? "raw" : "auto",
-      public_id: `${Date.now()}-${file.originalname.replace(/\s+/g, "-")}`,
+      resource_type: resourceType, // 🔥 THIS LINE FIXES IMAGES
+      public_id: `${Date.now()}-${file.originalname}`,
     };
   },
 });
 
-const upload = multer({
-  storage,
-  limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB
-  },
-});
+const upload = multer({ storage });
 
 export default upload;
+
