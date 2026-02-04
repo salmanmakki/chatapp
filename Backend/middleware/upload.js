@@ -4,12 +4,18 @@ import cloudinary from "../config/cloudinary.js";
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: {
+  params: async (req, file) => ({
     folder: "chat-app",
-    allowed_formats: ["jpg", "png", "jpeg", "webp"],
-  },
+    resource_type: "auto", // ✅ image, video, pdf
+    public_id: `${Date.now()}-${file.originalname}`,
+  }),
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB
+  },
+});
 
 export default upload;
