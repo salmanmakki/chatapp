@@ -10,7 +10,7 @@ const storage = new CloudinaryStorage({
     return {
       folder: "chat-app",
       resource_type: isPdf ? "raw" : "auto",
-      public_id: `${Date.now()}-${file.originalname}`,
+      public_id: `${Date.now()}-${file.originalname.replace(/\s+/g, "-")}`,
     };
   },
 });
