@@ -1,7 +1,5 @@
 import express from "express";
-
 import dotenv from "dotenv";
-
 import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -10,6 +8,7 @@ import { fileURLToPath } from "url";
 import userRoute from "./routes/user.route.js";
 import messageRoute from "./routes/message.route.js";
 import { app, server } from "./SocketIO/server.js";
+import userRoute from "./routes/user.route.js";
 
 // Configure __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);

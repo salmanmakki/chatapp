@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import createTokenAndSaveCookie from "../jwt/generateToken.js";
 import Message from "../models/message.model.js";
 
+// ================= SIGNUP =================
 export const signup = async (req, res) => {
   const { fullname, email, password, confirmPassword } = req.body;
 
@@ -11,28 +12,24 @@ export const signup = async (req, res) => {
       return res.status(400).json({ error: "Passwords do not match" });
     }
 
-    const user = await User.findOne({ email });
-    if (user) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({ error: "User already registered" });
     }
 
-    const hashPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    let profilePicUrl =
+    // ✅ Cloudinary URL or default avatar
+    const profilePic =
+      req.file?.path ||
       "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
 
-    if (req.file) {
-      profilePicUrl = `${process.env.BACKEND_URL}/uploads/${req.file.filename}`;
-    }
-
-    const newUser = new User({
+    const newUser = await User.create({
       fullname,
       email,
-      password: hashPassword,
-      profilePic: profilePicUrl,
+      password: hashedPassword,
+      profilePic,
     });
-
-    await newUser.save();
 
     createTokenAndSaveCookie(newUser._id, res);
 
@@ -42,13 +39,16 @@ export const signup = async (req, res) => {
         _id: newUser._id,
         fullname: newUser.fullname,
         email: newUser.email,
+        profilePic: newUser.profilePic,
       },
     });
   } catch (error) {
+    console.error("Signup error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
+// ================= LOGIN =================
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -65,54 +65,54 @@ export const login = async (req, res) => {
 
     createTokenAndSaveCookie(user._id, res);
 
-    res.status(201).json({
+    res.status(200).json({
       message: "User logged in successfully",
       user: {
         _id: user._id,
         fullname: user.fullname,
         email: user.email,
+        profilePic: user.profilePic,
       },
     });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
+// ================= LOGOUT =================
 export const logout = async (req, res) => {
   try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    });
-
-    res.status(201).json({ message: "User logged out successfully" });
+    res.clearCookie("jwt");
+    res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
+    console.error("Logout error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
+// ================= ALL USERS =================
 export const allUsers = async (req, res) => {
   try {
-    const loggedInUser = req.user._id;
+    const loggedInUserId = req.user._id;
 
     const users = await User.find({
-      _id: { $ne: loggedInUser },
+      _id: { $ne: loggedInUserId },
     }).select("-password");
 
     const usersWithLastMessage = await Promise.all(
       users.map(async (user) => {
         const latestMessage = await Message.findOne({
           $or: [
-            { senderId: loggedInUser, receiverId: user._id },
-            { senderId: user._id, receiverId: loggedInUser },
+            { senderId: loggedInUserId, receiverId: user._id },
+            { senderId: user._id, receiverId: loggedInUserId },
           ],
         }).sort({ createdAt: -1 });
 
         return {
           ...user.toObject(),
           lastMessage: latestMessage || null,
-          lastMessageTime: latestMessage ? latestMessage.createdAt : null,
+          lastMessageTime: latestMessage?.createdAt || null,
         };
       })
     );
@@ -128,7 +128,7 @@ export const allUsers = async (req, res) => {
 
     res.status(200).json(usersWithLastMessage);
   } catch (error) {
+    console.error("allUsers error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
-

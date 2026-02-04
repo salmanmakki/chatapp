@@ -1,5 +1,5 @@
 import express from "express";
-
+import upload from "../middleware/upload.js";
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -36,7 +36,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-
 router.post("/signup", upload.single("profilePic"), signup);
 
 router.post("/login", login);
@@ -44,6 +43,16 @@ router.post("/login", login);
 router.post("/logout", logout);
 
 router.get("/allusers", secureRoute, allUsers);
+
+router.post(
+  "/upload",
+  upload.single("image"),
+  (req, res) => {
+    res.status(200).json({
+      imageUrl: req.file.path,
+    });
+  }
+);
 
 
 
