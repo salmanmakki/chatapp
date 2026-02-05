@@ -48,7 +48,7 @@ function Message({ message, onImageClick }) {
         <>
           <img
             src={mediaUrl}
-            alt="sent"
+            alt="image"
             loading="lazy"
             onClick={() => onImageClick?.(mediaUrl)}
             className="rounded-xl max-h-64 object-cover cursor-pointer"
